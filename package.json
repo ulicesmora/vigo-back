@@ -1,0 +1,15 @@
+{
+  "name": "vigo-back",
+  "version": "1.0.0",
+  "description": "Back en de un sistema tipo Airbnb",
+  "license": "MIT",
+  "author": "Ulices Mora",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.2.0"
+  }
+}

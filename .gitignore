@@ -1,0 +1,15 @@
+.DS_Store
+Thumbs.db
+
+node_modules/
+.env
+serviceAccountKey.json
+
+
+*.log
+npm-debug.log*
+
+.vscode/
+*.swp
+
+.git/
