@@ -1,12 +1,23 @@
-const express = require('express');
+// const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { db } = require("../firebase");
+// const { db } = require("../firebase");
+import { db } from "../firebase.js";
+import admin from "firebase-admin";
 
 router.post("/crear-usuario", async (req, res) => {
-    const  { uid, name, email, role, photoURL } = req.body;
+    console.log("BODY:", req.body); // 👈 esto
+    const  { name, email, password, role, photoURL } = req.body;
 
     try {
-        await db.collection("users").doc(uid).set({
+        const userRecord = await admin.auth().createUser({
+            email,
+            password,
+            displayName: name,
+            photoURL: photoURL || "",
+        });
+
+        await db.collection("users").doc(userRecord.uid).set({
             name,
             email,
             role,
@@ -14,10 +25,10 @@ router.post("/crear-usuario", async (req, res) => {
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
         });
 
-        res.status(201).send({ message: "Usuario creado" });
+        res.status(201).send({ uid: userRecord.uid, message: "Usuario creado" });
     } catch (error) {
         res.status(500).send({ error: error.message });
     }
 });
 
-module.exports = router;
+export default router;

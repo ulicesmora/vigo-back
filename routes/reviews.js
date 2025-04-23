@@ -1,8 +1,11 @@
-const express = require('express');
+// const express = require('express');
+import express from 'express';
 const router = express.Router();
-const { db } = require("../firebase");
+// const { db } = require("../firebase");
+import { db } from "../firebase.js";
+import admin from "firebase-admin";
 
-router.post("/crear-espacio", async (req, res) => {
+router.post("/crear-review", async (req, res) => {
     const { userId, spaceId, rating, comment } = req.body;
 
     try {
@@ -21,4 +24,4 @@ router.post("/crear-espacio", async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;
