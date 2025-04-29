@@ -2,8 +2,8 @@
 import express from 'express';
 const router = express.Router();
 // const { db } = require("../firebase");
-import { db } from "../firebase.js";
-import admin from "firebase-admin";
+import { db, admin } from "../firebase.js";
+// import admin from "firebase-admin";
 
 router.post("/crear-review", async (req, res) => {
     const { userId, spaceId, rating, comment } = req.body;
@@ -21,6 +21,17 @@ router.post("/crear-review", async (req, res) => {
     } catch (error) {
         res.status(500).send({ error: error.message });
         
+    }
+});
+
+router.delete("/eliminar-review/:reviewId", async (req, res) => {
+    const { reviewId } = req.params;
+
+    try {
+        await db.collection("reviews").doc(reviewId).delete();
+        res.status(200).send({ message: "Reseña eliminada correctamente"});
+    } catch (error) {
+        res.status(500).send({ error: error.message });        
     }
 });
 

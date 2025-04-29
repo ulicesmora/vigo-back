@@ -2,8 +2,8 @@
 import express from 'express';
 const router = express.Router();
 // const { db } = require("../firebase");
-import { db } from "../firebase.js";
-import admin from "firebase-admin";
+import { db, admin } from "../firebase.js";
+// import admin from "firebase-admin";
 
 router.post("/crear-usuario", async (req, res) => {
     console.log("BODY:", req.body); // 👈 esto
@@ -28,6 +28,17 @@ router.post("/crear-usuario", async (req, res) => {
         res.status(201).send({ uid: userRecord.uid, message: "Usuario creado" });
     } catch (error) {
         res.status(500).send({ error: error.message });
+    }
+});
+
+router.delete("/eliminar-usuario/:uid", async (req, res) => {
+    const { uid } = req.params;
+
+    try {
+        await db.collection("users").doc(uid).delete();
+        res.status(200).send({ message: "Usuario eliminado correctamente" });
+    } catch (error) {
+        res.status(500).send({ error: error.message});
     }
 });
 

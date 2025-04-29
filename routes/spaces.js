@@ -2,8 +2,8 @@
 import express from 'express';
 const router = express.Router();
 // const { db } = require("../firebase");
-import { db } from "../firebase.js";
-import admin from "firebase-admin";
+import { db,admin } from "../firebase.js";
+// import admin from "firebase-admin";
 
 router.post("/crear-espacio", async (req, res) => {
     const { title, description, location, price, photos, ownerId, categories  } = req.body;
@@ -24,6 +24,17 @@ router.post("/crear-espacio", async (req, res) => {
         res.status(201).send({ message: "Espacio creado", id: spaceRef.id });
     } catch (error) {
         res.status(500).send({ error: error.message });
+    }
+});
+
+router.delete("/eliminar-espacio/:spaceId", async (req, res) => {
+    const { spaceId } = req.params;
+
+    try {
+        await db.collection("spaces").doc(spaceId).delete();
+        res.status(200).send({ message: "Espacio eliminado correctamente"});
+    } catch (error) {
+        res.status(500).send({ error: error.message });        
     }
 });
 
