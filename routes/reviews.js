@@ -24,6 +24,22 @@ router.post("/crear-review", async (req, res) => {
     }
 });
 
+router.patch("/actualizar-review/:id", async (req, res) => {
+    const { id } = req.params;
+    const { rating, comment } = req.body;
+
+    try {
+        await db.collection("reviews").doc(id).update({
+            ...(rating && { rating }),
+            ...(comment && { comment }),
+        });
+
+        res.status(200).send({ message: "Reseña actualizada" });
+    } catch (error) {
+        res.status(500).send({ error: error.message });        
+    }
+});
+
 router.delete("/eliminar-review/:reviewId", async (req, res) => {
     const { reviewId } = req.params;
 

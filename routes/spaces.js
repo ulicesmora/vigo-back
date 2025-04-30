@@ -27,6 +27,26 @@ router.post("/crear-espacio", async (req, res) => {
     }
 });
 
+router.patch("/actualizar-espacio/:id", async (req, res) => {
+    const { id } = req.params;
+    const { title, description, location, price, photos, categories } = req.body;
+
+    try {
+        await db.collection("spaces").doc(id).update({
+            ...(title && { title }),
+            ...(description && { description }),
+            ...(location && { location }),
+            ...(price && { price }),
+            ...(photos && { photos }),
+            ...(categories && { categories }),
+        });
+
+        res.status(200).send({ message: "Espacio actualizado" });
+    } catch (error) {
+        res.status(500).send({ error: error.message });        
+    }
+});
+
 router.delete("/eliminar-espacio/:spaceId", async (req, res) => {
     const { spaceId } = req.params;
 

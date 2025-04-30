@@ -40,6 +40,35 @@ router.post("/crear-reservacion", async (req, res) => {
     }
 });
 
+router.patch("/actualizar-reservacion/:id", async (req, res) => {
+    const { id } = req.params;
+    const { spaceId, ownerId, dateStart, dateEnd } = req.body;
+
+    try {
+         //Verificar su ya existe una reservación en ese horario
+         const reservasExistentes = await db.collection("reservations")
+         .where("spaceId", "==", spaceId)
+         .where("dateStart", "==", new Date(dateStart))
+         .where("dateEnd", "==", new Date(dateEnd))
+         .get();
+
+        if (!reservasExistentes.empty) {
+            return res.status(400).send({ error: "Ya existe una reservación en ese horario"});
+        }
+
+        await db.collection("reservations").doc(id).update({
+            ...(spaceId && { spaceId }),
+            ...(ownerId && { ownerId }),
+            ...(dateStart && { dateStart: new Date(dateStart) }),
+            ...(dateEnd && { dateEnd: new Date(dateEnd) }),
+        });
+
+        res.status(200).send({ message: "Reservación actualizada correctamente" });
+    } catch (error) {
+        res.status(500).send({ error: error.message });        
+    }
+});
+
 router.delete("/eliminar-reservacion/:reservaId", async (req, res) => {
     const { reservaId } = req.params;
 

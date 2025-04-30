@@ -31,6 +31,25 @@ router.post("/crear-usuario", async (req, res) => {
     }
 });
 
+router.patch("/actualizar-usuario/:id", async (req, res) => {
+    const { id } = req.params;
+    const { name, email, password, role, photoURL } = req.body;
+
+    try {
+        await db.collection("users").doc(id).update({
+            ...(name && { name }),
+            ...(email && { email }),
+            ...(password && { password }),
+            ...(role && { role }),
+            ...(photoURL && { photoURL }),
+        });
+
+        res.status(200).send({ message: "Usuario actualizado" });
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
+});
+
 router.delete("/eliminar-usuario/:uid", async (req, res) => {
     const { uid } = req.params;
 
