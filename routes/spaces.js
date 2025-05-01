@@ -27,6 +27,31 @@ router.post("/crear-espacio", async (req, res) => {
     }
 });
 
+router.get("/listar-espacios", async (req, res) => {
+    try {
+        const snapshot = await db.collection("spaces").get();
+        const spaces = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        res.status(200).send(spaces);
+    } catch (error) {
+        res.status(500).send({ error: error.message });        
+    }
+});
+
+router.get("/listar-espacios/:id", async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const doc = await db.collection("spaces").doc(id).get();
+        if(!doc.exists) {
+            return res.status(401).send({ message: "Espacio no encontrado" });
+        }
+        
+        res.status(200).send({ id: doc.id, ...doc.data() });
+    } catch (error) {
+        res.status(500).send({ error: error.message });        
+    }
+});
+
 router.patch("/actualizar-espacio/:id", async (req, res) => {
     const { id } = req.params;
     const { title, description, location, price, photos, categories } = req.body;

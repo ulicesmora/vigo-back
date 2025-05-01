@@ -31,6 +31,31 @@ router.post("/crear-usuario", async (req, res) => {
     }
 });
 
+router.get("/listar-usuarios", async (req, res) => {
+    try {
+        const snapshot = await db.collection("users").get();
+        const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        res.status(200).send(users);
+    } catch (error) {
+        res.status(500).send({ error: error.message });        
+    }
+});
+
+router.get("/listar-usuarios/:id", async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const doc = await db.collection("users").doc(id).get();
+        if(!doc.exists) {
+            return res.status(404).send({ message: "Usuario no encontrado" });
+        }
+
+        res.status(200).send({ id: doc.id, ...doc.data() });
+    } catch (error) {
+        res.status(500).send({ error: error.message });        
+    }
+});
+
 router.patch("/actualizar-usuario/:id", async (req, res) => {
     const { id } = req.params;
     const { name, email, password, role, photoURL } = req.body;

@@ -24,6 +24,31 @@ router.post("/crear-review", async (req, res) => {
     }
 });
 
+router.get("/listar-reviews", async (req, res) => {
+    try {
+        const snapshot = await db.collection("reviews").get();
+        const reviews = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        res.status(200).send(reviews);
+    } catch (error) {
+        res.status(500).send({ error: error.message });        
+    }
+});
+
+router.get("/listar-reviews/:id", async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const doc = await db.collection("reviews").doc(id).get();
+        if(!doc.exists) {
+            return res.status(404).send({ message: "Reseña no encontrada" });
+        }
+
+        res.status(200).send({ id: doc.id, ...doc.data() });
+    } catch (error) {
+        res.status(500).send({ error: error.message });        
+    }
+});
+
 router.patch("/actualizar-review/:id", async (req, res) => {
     const { id } = req.params;
     const { rating, comment } = req.body;

@@ -40,6 +40,32 @@ router.post("/crear-reservacion", async (req, res) => {
     }
 });
 
+router.get("/listar-reservaciones", async (req, res) => {
+    try {
+        const snapshot = await db.collection("reservations").get();
+        const reservations = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        res.status(200).send(reservations);
+    } catch (error) {
+        res.status(500).send({ error: error.message });       
+    }
+});
+
+router.get("/listar-reservaciones/:id", async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const doc = await db.collection("reservations").doc(id).get();
+        
+        if(!doc.exists) {
+            return res.status(404).send({ message: "Reservación no encontrada" });
+        }
+
+        res.status(200).send({ id: doc.id, ...doc.data() });
+    } catch (error) {
+        res.status(500).send({ error: error.message });        
+    }
+});
+
 router.patch("/actualizar-reservacion/:id", async (req, res) => {
     const { id } = req.params;
     const { spaceId, ownerId, dateStart, dateEnd } = req.body;
